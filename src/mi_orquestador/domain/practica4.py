@@ -1,6 +1,6 @@
 from pydantic import ValidationError
 
-from app.models import ResearchRequest
+from mi_orquestador.app.models import ResearchRequest
 
 #Caso valido
 ok = ResearchRequest(topic="abandono al registro")
