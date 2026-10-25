@@ -1,6 +1,6 @@
 from langchain_openai import ChatOpenAI
 
-from mi_orquestador.app.config import MODEL_NAME, check_config
+from agentic_research.app.config import MODEL_NAME, check_config
 
 
 def get_llm(temperature: float = 0) -> ChatOpenAI:

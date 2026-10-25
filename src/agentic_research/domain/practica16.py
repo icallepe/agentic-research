@@ -1,4 +1,4 @@
-from mi_orquestador.app.qa import answer
+from agentic_research.app.qa import answer
 
 for pregunta in[
     "¿cual es el pricnipal motivo de abandono en el registro?",

@@ -1,7 +1,7 @@
 from langchain_core.prompts import ChatPromptTemplate
 
-from mi_orquestador.app.llm import get_llm
-from mi_orquestador.app.rag import search
+from agentic_research.app.llm import get_llm
+from agentic_research.app.rag import search
 
 SYSTEM = """Eres un analista de investigacion. Responde SOLO con la informacion de los fragmentos entregados.
 Reglas:

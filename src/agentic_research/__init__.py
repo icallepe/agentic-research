@@ -4,8 +4,8 @@ from pydantic import ValidationError
 
 
 def main() -> None:
-    from mi_orquestador.app.models import ResearchRequest
-    from mi_orquestador.orchestrator import run
+    from agentic_research.app.models import ResearchRequest
+    from agentic_research.orchestrator import run
 
     request = ResearchRequest(
         topic="Agentes de IA",

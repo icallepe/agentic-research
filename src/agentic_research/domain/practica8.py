@@ -1,6 +1,6 @@
 from langchain_core.prompts import ChatPromptTemplate
 
-from mi_orquestador.app.llm import get_llm, usage_summary
+from agentic_research.app.llm import get_llm, usage_summary
 
 prompt = ChatPromptTemplate.from_messages(
     [

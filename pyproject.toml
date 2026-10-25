@@ -1,7 +1,7 @@
 [project]
-name = "mi-orquestador"
+name = "agentic-research"
 version = "0.1.0"
-description = "Add your description here"
+description = "Sistema agéntico de investigación: un supervisor coordina agentes que investigan, analizan y redactan informes sobre tus documentos"
 readme = "README.md"
 authors = [
     { name = "icallepe", email = "isabelacalleperez@gmail.com" }
@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [project.scripts]
-mi-orquestador = "mi_orquestador.app.main:main"
+agentic-research = "agentic_research.app.main:main"
 
 [build-system]
 requires = ["uv_build>=0.12.23,<0.13.0"]

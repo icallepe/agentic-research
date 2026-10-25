@@ -1,4 +1,4 @@
-from mi_orquestador.app.llm import get_llm
+from agentic_research.app.llm import get_llm
 
 llm = get_llm()
 for estilo in("en una sola frase", "en un parrafo largo"):

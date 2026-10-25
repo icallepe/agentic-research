@@ -2,10 +2,10 @@ from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.tools import tool
 
-from mi_orquestador.app.llm import get_llm
-from mi_orquestador.app.qa import format_context
-from mi_orquestador.app.rag import search
-from mi_orquestador.app.state import ResearchState, current
+from agentic_research.app.llm import get_llm
+from agentic_research.app.qa import format_context
+from agentic_research.app.rag import search
+from agentic_research.app.state import ResearchState, current
 
 import re
 from collections import Counter

@@ -1,4 +1,4 @@
-from mi_orquestador.app.supervisor_brain import decide_route
+from agentic_research.app.supervisor_brain import decide_route
 
 casos = [
     ("sin nada hecho", dict(has_research=False, has_analysis=False,

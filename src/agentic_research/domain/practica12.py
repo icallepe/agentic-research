@@ -2,7 +2,7 @@ import math
 
 from langchain_openai import OpenAIEmbeddings
 
-from mi_orquestador.app.config import EMBEDDING_MODEL, check_config
+from agentic_research.app.config import EMBEDDING_MODEL, check_config
 
 check_config ()
 emb = OpenAIEmbeddings(model=EMBEDDING_MODEL)

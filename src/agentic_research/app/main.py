@@ -1,9 +1,9 @@
 import argparse
 
-from mi_orquestador.app.graph import build_graph
-from mi_orquestador.app.models import ResearchRequest
-from mi_orquestador.app.qa import answer
-from mi_orquestador.app.rag import index_documents, reset_index
+from agentic_research.app.graph import build_graph
+from agentic_research.app.models import ResearchRequest
+from agentic_research.app.qa import answer
+from agentic_research.app.rag import index_documents, reset_index
 
 
 def main() -> None:

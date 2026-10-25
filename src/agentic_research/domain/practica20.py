@@ -1,4 +1,4 @@
-from mi_orquestador.app.agents import run_researcher
+from agentic_research.app.agents import run_researcher
 
 resumen, refs = run_researcher("abandono en el registro de la app")
 print(resumen)

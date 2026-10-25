@@ -1,8 +1,8 @@
 from langgraph.graph import END, START, StateGraph
 
-from mi_orquestador.app.agents import researcher_node, synthesizer_node, analyst_node
-from mi_orquestador.app.state import ResearchState, current
-from mi_orquestador.app.supervisor_brain import decide_route
+from agentic_research.app.agents import researcher_node, synthesizer_node, analyst_node
+from agentic_research.app.state import ResearchState, current
+from agentic_research.app.supervisor_brain import decide_route
 
 MAX_STEPS = 8
 

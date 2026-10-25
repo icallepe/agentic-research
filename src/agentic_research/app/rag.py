@@ -6,8 +6,8 @@ from langchain_core.documents import Document
 from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from mi_orquestador.app.config import EMBEDDING_MODEL, check_config
-from mi_orquestador.app.models import Source
+from agentic_research.app.config import EMBEDDING_MODEL, check_config
+from agentic_research.app.models import Source
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"

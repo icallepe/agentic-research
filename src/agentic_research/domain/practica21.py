@@ -1,4 +1,4 @@
-from mi_orquestador.app.graph import build_simple_graph
+from agentic_research.app.graph import build_simple_graph
 
 grafo = build_simple_graph()
 print(grafo.get_graph().draw_mermaid())

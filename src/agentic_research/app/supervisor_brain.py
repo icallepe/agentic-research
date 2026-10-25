@@ -1,7 +1,7 @@
 from langchain_core.prompts import ChatPromptTemplate
 
-from mi_orquestador.app.llm import get_llm
-from mi_orquestador.app.models import RouteDecision
+from agentic_research.app.llm import get_llm
+from agentic_research.app.models import RouteDecision
 
 SYSTEM = """Eres el manager de un equipo de investigación con tres especialistas:
 -researcher: busca informacion en los documentos
