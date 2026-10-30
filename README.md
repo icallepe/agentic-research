@@ -44,6 +44,8 @@ Crea un archivo `.env` en la raíz con tu clave:
 OPENAI_API_KEY=sk-...
 ```
 
+Opcionalmente, añade `REDIS_URL` para guardar los checkpoints de LangGraph (pausas con `interrupt`, reanudar ejecuciones) en Redis. Sirve un Redis local con Docker (`redis://localhost:6379`) o uno gratuito de [Redis Cloud](https://redis.io/try-free). Hace falta que incluya los módulos RedisJSON y RediSearch (`redis-stack-server` y Redis Cloud los traen). Sin `REDIS_URL` se usa memoria. Hay un ejemplo en `.env.example`.
+
 Modelos usados: `gpt-4o-mini` (chat) y `text-embedding-3-small` (embeddings), configurables en `src/agentic_research/app/config.py`.
 
 ## Uso
