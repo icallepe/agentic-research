@@ -1,6 +1,6 @@
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class ResearchRequest(BaseModel):
@@ -26,3 +26,16 @@ class RouteDecision(BaseModel):
 
     next: Literal["researcher", "analyst", "synthesizer", "finish"]
     reason: str = Field(description="Una frase que explica por que")
+
+
+class ReviewRequest(BaseModel):
+    """Decision del revisor sobre un borrador."""
+
+    action: Literal["approve", "changes"]
+    feedback: str = ""
+
+    @model_validator(mode="after")
+    def feedback_required_for_changes(self):
+        if self.action == "changes" and not self.feedback.strip():
+            raise ValueError("feedback es obligatorio cuando action es 'changes'")
+        return self

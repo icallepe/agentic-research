@@ -11,3 +11,8 @@ wheels/
 
 .env
 chroma/
+
+# Demo estatica generada por scripts/build_demo.py
+dist-demo/
+.coverage
+.pytest_cache/

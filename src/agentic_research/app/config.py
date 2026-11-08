@@ -10,6 +10,8 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 REDIS_URL = os.getenv("REDIS_URL")
 MODEL_NAME = "gpt-4o-mini"
 EMBEDDING_MODEL = "text-embedding-3-small"
+# Phoenix (observabilidad). Vacio = sin trazas.
+PHOENIX_ENDPOINT = os.getenv("PHOENIX_ENDPOINT", "")
 
 
 def check_config() -> None:

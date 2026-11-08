@@ -1,14 +1,31 @@
 from langgraph.graph import END, START, StateGraph
+from langgraph.types import interrupt
 
-from agentic_research.app.agents import researcher_node, synthesizer_node, analyst_node
+from agentic_research.app.agents import analyst_node, make_research_node, synthesizer_node
+from agentic_research.app.core.ports import Retriever
+from agentic_research.app.infraestructure.chroma_retriever import ChromaRetriever
 from agentic_research.app.state import ResearchState, current
 from agentic_research.app.supervisor_brain import decide_route
 
 MAX_STEPS = 8
 
+
+def initial_state(topic: str, sections: list[str], detail_level: str) -> dict:
+    return{
+        "topic": topic,
+        "sections": sections,
+        "detail_level": detail_level,
+        "contributions": [],
+        "references": [],
+        "delegation_trace": [],
+        "step_count": 0,
+        "revision": 0,
+    }
+
+
 def build_simple_graph():
     builder = StateGraph(ResearchState)
-    builder.add_node("researcher", researcher_node)
+    builder.add_node("researcher", make_research_node(ChromaRetriever()))
     builder.add_node("synthesizer", synthesizer_node)
 
     builder.add_edge(START, "researcher")
@@ -66,14 +83,22 @@ def supervisor(state: ResearchState) -> dict:
     }
 
 def route_from_supervisor(state: ResearchState) -> str:
-    return state["next_route"]
+    route = state["next_route"]
+    if route == "finish":
+        return "review" if state.get("draft") else "end"
+    return route
 
-def build_graph():
+
+def build_graph(checkpointer=None, retriever: Retriever | None = None):
+    retriever = retriever or ChromaRetriever()
+
     builder = StateGraph(ResearchState)
     builder.add_node("supervisor", supervisor)
-    builder.add_node("researcher", researcher_node)
+    builder.add_node("researcher", make_research_node(retriever))
     builder.add_node("analyst", analyst_node)
     builder.add_node("synthesizer", synthesizer_node)
+    builder.add_node("review", review_node)
+
 
     builder.add_edge(START, "supervisor")
     builder.add_conditional_edges(
@@ -83,12 +108,39 @@ def build_graph():
             "researcher": "researcher",
             "analyst": "analyst",
             "synthesizer": "synthesizer",
-            "finish": END,
+            "review": "review",
+            "end": END,
         },
     )
 
     builder.add_edge("researcher", "supervisor")
     builder.add_edge("analyst", "supervisor")
     builder.add_edge("synthesizer", "supervisor")
-    return builder.compile()
+    builder.add_conditional_edges("review", route_after_review, {"end": END, "supervisor": "supervisor"})
+    return builder.compile(checkpointer=checkpointer)
     
+def review_node(state: ResearchState) -> dict:
+    decision = interrupt (
+        {
+            "draft": state["draft"],
+            "references": sorted({r["file"] for r in current(state.get("references", []), state)}),
+            "sources": [
+                {"file": r["file"], "excerpt": r["excerpt"]}
+                for r in current(state.get("references", []), state)
+            ],
+            "revision": state.get("revision", 0),
+        }
+    )
+    if decision.get("action") == "approve":
+        return{"approved": True}
+
+    return{
+        "approved": False,
+        "feedback": decision["feedback"],
+        "revision": state.get("revision", 0) + 1,
+        "draft": "",
+        "step_count": 0,
+    }
+
+def route_after_review(state: ResearchState) -> str:
+    return "end" if state.get("approved") else "supervisor"

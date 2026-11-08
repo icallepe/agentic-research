@@ -4,7 +4,7 @@ from langchain_core.tools import tool
 
 from agentic_research.app.llm import get_llm
 from agentic_research.app.qa import format_context
-from agentic_research.app.rag import search
+from agentic_research.app.core.ports import Retriever
 from agentic_research.app.state import ResearchState, current
 
 import re
@@ -34,7 +34,8 @@ Reglas:
 SYNTH_HUMAN = """tema: {topic}
 
 Contribuciones de los especialistas:
-{contributions}"""
+{contributions}
+{feedback_block}"""
 
 _synth_prompt = ChatPromptTemplate.from_messages([("system", SYNTH_SYSTEM), ("human", SYNTH_HUMAN)])
 
@@ -67,15 +68,17 @@ DETAIL_TEXT = {
 MAX_TOOL_ROUNDS = 4
 
 
-def run_researcher(topic: str, feedback: str = "") -> tuple[str, list[dict]]:
-    """Devuelve (resumen de hallazgos, referencias consultadas)"""
+
+
+
+def run_researcher(topic: str, retriever: Retriever, feedback: str ="") ->tuple[str, list[dict]]:
     found: list[dict] = []
 
     @tool
     def search_documents(query: str) -> str:
         """Busca fragmentos relevantes en los documentos de investigación.
         Devuelve el texto de cada fragmento precedido por el archivo del que viene"""
-        sources = search(query, k=4)
+        sources = retriever.search(query, k=4)
         found.extend({"file": s.file, "excerpt": s.excerpt} for s in sources)
         return format_context(sources)
 
@@ -101,15 +104,14 @@ def run_researcher(topic: str, feedback: str = "") -> tuple[str, list[dict]]:
 
 
 
-def researcher_node(state: ResearchState) -> dict:
-    rev = state.get("revision", 0)
-    resumen, refs = run_researcher(state["topic"], state.get("feedback",""))
-    return{
-        "contributions": [{"agent": "researcher", "content": resumen, "revision": rev}],
-        "references": [{**r, "revision": rev} for r in refs]
-    }
-
-
+def make_research_node(retriever: Retriever):
+    def researcher_node(state: ResearchState) -> dict:
+        rev = state.get("revision", 0)
+        resumen, refs = run_researcher(state["topic"], retriever, state.get("feedback", ""))
+        return {
+            "contributions": [{"agent": "researcher", "content": resumen, "revision": rev}], "references": [{**r, "revision": rev} for r in refs],
+        }
+    return researcher_node
 
 def synthesizer_node(state: ResearchState) -> dict:
     contribuciones = "\n\n".join(
@@ -122,6 +124,12 @@ def synthesizer_node(state: ResearchState) -> dict:
             "detail": DETAIL_TEXT.get(state.get("detail_level", "low"), DETAIL_TEXT["low"]),
             "topic": state["topic"],
             "contributions": contribuciones,
+            "feedback_block": (
+                f"\nCorrección pedida por el revisor humano (debe reflejarse en el informe): "
+                f"{state['feedback']}"
+                if state.get("feedback")
+                else""
+            ),
         }
     )
     return {
