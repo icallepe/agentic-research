@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agentic Research</title>
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232f5d62'/%3E%3Cpath d='M9 22V10m7 12V14m7 8V8' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    // Aplica el tema antes de pintar para evitar el parpadeo
+    const saved = localStorage.getItem("theme");
+    if (saved) document.documentElement.dataset.theme = saved;
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main" data-i18n="skip">Saltar al contenido</a>
+
+  <div class="shell">
+    <aside class="sidebar" id="sidebar" data-i18n-aria="reportsAria" aria-label="Informes">
+      <div class="brand">
+        <span class="logo" aria-hidden="true"></span>
+        <span>Agentic Research</span>
+      </div>
+      <a class="btn primary block" href="#/new" id="new-btn">
+        <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span data-i18n="newReport">Nuevo informe</span>
+      </a>
+      <nav class="history" data-i18n-aria="historyAria" aria-label="Historial">
+        <h2 class="eyebrow" data-i18n="historyH">Historial</h2>
+        <ul id="history"></ul>
+      </nav>
+      <div class="sidebar-foot">
+        <div class="lang" role="group" aria-label="Language">
+          <button type="button" data-lang="en" aria-pressed="false">EN</button>
+          <button type="button" data-lang="es" aria-pressed="false">ES</button>
+        </div>
+        <button class="btn ghost" id="theme-btn" type="button" data-i18n-aria="themeAria" aria-label="Cambiar tema">
+          <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M16 11.5A6.5 6.5 0 0 1 8.5 4a6.5 6.5 0 1 0 7.5 7.5Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+          <span data-i18n="themeBtn">Tema</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="scrim" id="scrim" hidden></div>
+
+    <main id="main" tabindex="-1">
+      <header class="topbar">
+        <button class="btn ghost icon" id="menu-btn" type="button" data-i18n-aria="openHistory" aria-label="Abrir historial" aria-controls="sidebar" aria-expanded="false">
+          <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+        <span class="brand small"><span class="logo" aria-hidden="true"></span>Agentic Research</span>
+      </header>
+      <div class="demo-banner" id="demo-banner" hidden>
+        <span><b data-i18n="demoTag">Demo</b> · <span data-i18n="demoText"></span></span>
+        <a href="https://github.com/icallepe/agentic-research" target="_blank" rel="noopener" data-i18n="demoLink">GitHub</a>
+      </div>
+      <div id="view"></div>
+    </main>
+  </div>
+
+  <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+  <script src="config.js"></script>
+  <script src="demo.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
