@@ -69,12 +69,52 @@ uv run agentic-research reset
 
 `research` imprime la traza del supervisor (qué agente actuó y por qué) y después el borrador del informe. `--detail` acepta `low` (por defecto, breve) o `high` (con cifras y fuentes).
 
+## Interfaz web
+
+La API (FastAPI) sirve también la interfaz en la raíz. Necesita Redis (`REDIS_URL`). Un solo comando arranca la API y el worker y abre el navegador:
+
+```powershell
+uv run agentic-research serve              # --port 8000, --no-browser
+```
+
+En Windows también puedes hacer doble clic en `iniciar.bat`.
+
+Por separado (por ejemplo para desarrollo con recarga):
+
+```powershell
+uv run python -m agentic_research.app.worker
+uv run uvicorn agentic_research.app.api:app --reload
+```
+
+Desde la interfaz (<http://localhost:8000>) puedes crear un informe, seguir en vivo qué agente actúa y por qué, leer el borrador con sus fuentes citadas (cada cita abre el fragmento que la respalda), aprobarlo o pedir cambios, y consultar el historial.
+
+| Endpoint | Qué hace |
+| --- | --- |
+| `POST /jobs` | Crea un informe (`topic`, `sections`, `detail_level`) |
+| `GET /jobs` | Lista los jobs, el más reciente primero (`?limit=`) |
+| `GET /jobs/{id}` | Estado, `trace` (decisiones del supervisor), `draft` y `sources` |
+| `PATCH /jobs/{id}/review` | `approve` o `changes` (con `feedback`) |
+
+## Demo pública
+
+La misma interfaz funciona sin backend con datos simulados (un informe de ejemplo que se genera paso a paso, en inglés y español). Sirve para enseñar el proyecto en un portfolio sin alojar la API, el worker ni Redis, y sin gastar créditos de OpenAI.
+
+```powershell
+python scripts/build_demo.py          # genera dist-demo/ con el modo demo activado
+npx vercel dist-demo --prod           # o sube la carpeta a cualquier hosting estático
+```
+
+Para probarla en local con la API real, abre `http://localhost:8000/?demo`. Añade `?lang=es` o `?lang=en` para fijar el idioma.
+
 ## Estructura
 
 ```
 src/agentic_research/
 ├── app/
-│   ├── main.py             CLI (index, reset, ask, research)
+│   ├── main.py             CLI (index, reset, ask, research, review)
+│   ├── api.py              API REST + sirve la interfaz
+│   ├── worker.py           Ejecuta los jobs y publica su progreso
+│   ├── web/                Interfaz (HTML/CSS/JS sin build) y demo.js (backend simulado)
 │   ├── graph.py            Grafo de LangGraph, supervisor y reglas
 │   ├── agents.py           researcher, analyst y synthesizer
 │   ├── supervisor_brain.py Decisión de ruta del supervisor (LLM)
