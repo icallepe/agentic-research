@@ -1,33 +1,34 @@
-from typing import TypeDict
+import asyncio
 
-from langgraph.checcpoint.memory import InMemorySaver
-from langgraph.graph import END, START, StateGraph
-from langgraph.types import command, interrupt
+from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.types import Command
 
-class Estado(TypeDicted, total=False):
-    borrador: str
-    aprobado: bool
+from agentic_research.app.graph import build_graph, initial_state
 
-def redactar(state: Estado) -> dict:
-    return{"borrador": "Este es el borrador del informe"}
+async def main() -> None:
+    grafo = build_graph(InMemorySaver())
+    config = {"configurable": {"thread_id": "prueba-1"}}
 
-def revisar(state: Estado) -> dict:
-    decision = interrupt({"borrador": state["borrador"]})
-    return {"aprobado": decision == "si"}
+    await grafo.ainvoke(
+        initial_state("abandono en el registro de la app", ["hallazgos", "recomendaciones"], "low"),
+        config,
+    )
 
-b =  StateGraph(Estado)
-b.add_node("redactar", redactar)
-b.add_node("revisar", revisar)
-b.add_edge(START, "redactar")
-b.add_edge("redactar", "revisar")
-b.add_edge("revisar", END)
+    while True:
+        snap = await grafo.aget_state(config)
+        if not snap.next:
+            break
+        payload = snap.tasks[0].interrupts[0].value
+        print(f"\n=====BORRADOR (revision {payload['revision']}) =====\n{payload['draft']}")
+        print("Referencias:", ", ".join(payload["references"]))
 
-grafo = b.compile(checkpointer=InMemorySaver())
-config = {"configurable": {"thread_id": "demo-1"}}
+        op = input("\n¿Aprobar (a) o pedir cambios (c)?").strip().lower()
+        if op == "a":
+            resume = {"action": "approve"}
+        else:
+            resume = {"action": "changes", "feedback": input("¿Que debe cambiar?")}
+        await grafo.ainvoke(Command(resume=resume), config)
 
-resultado = grafo.invoke({}, config)
-print("Pausado. Mensaje para la persona:", resultado["__interupt___"][0.value])
-print("Siguiente nodo pendiente:", grafo.get_state(config).next)
+    print("\nFlujo terminado. Aprobado:", (await grafo.aget_state(config)).values.get("approved"))
 
-final = grafo.invoke(Command(resume="si"), config)
-print("Resultado final:", final)
+asyncio.run(main())

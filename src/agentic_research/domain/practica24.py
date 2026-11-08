@@ -1,4 +1,4 @@
-from app.graph import apply_rules, forced_route
+from agentic_research.app.graph import apply_rules, forced_route
 
 assert apply_rules("analyst", has_r=False, has_a=False, has_d=Flase)[0] =="researcher"
 assert apply_rules("sythesizer", has_r=False, has_a=False, has_d=False)[0] == "researcher"
