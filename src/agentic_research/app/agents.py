@@ -1,35 +1,43 @@
+import json
+import re
+from collections import Counter
+
 from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.tools import tool
 
+from agentic_research.app.config import K_BUSQUEDA
+from agentic_research.app.core.ports import Retriever
 from agentic_research.app.llm import get_llm
 from agentic_research.app.qa import format_context
-from agentic_research.app.core.ports import Retriever
 from agentic_research.app.state import ResearchState, current
+from agentic_research.app.stats import cargar_quejas, contar_por_tema
 
-import re
-from collections import Counter
-
-
-
-RESEARCHER_SYSTEM = """Eres un investigador. Tu trabajo es reunir evidencia en los documentos usando la herramienta search_documents.
+RESEARCHER_SYSTEM = """ Eres un investigador de quejas de clientes de servicios financieros finacieros.
+Tienes dos herramientas: 
+- search_documents: busca quejas relevnates (textos en ingles escritos por clientes)
+-contar_quejas: cuenta cuentas quejas hay por tema en toda la muestra.
 Reglas:
--Haz entre 2 y 3 busquedas con consultas distintas y especificas.
--Cuando tengas suficiente evidencia, responde con un resumen de hallazgos.
--Cita la fuente de cada dato entre corchetes, por ejemplo [analitica.md]
--Si encuentras datos que se contradicen entre fuentes, señalalo explicitamente
--Si no encuentras informacion relevante, dilo. No inventes datos
-"""
+-Primero llama a contar_quejas para saber cuales son los temas mas frecuentes.
+-Luego haz entre 2 y 3 busquedas con search_documents para entender cada tema principal
+-Toda cifra o porcentaje debe venir de contar_quejas. Nunca calcules ni estimes cifras tu.
+-Cita cada queja entre corchetes con su identificador, por ejemplo [queja 1233432]
+-Cuando cites loq ue dice un cliente, copia una frase corta en ingles entre comillas y explica en español
+-Lo que dicen en las quejas es lo que reportan los clientes, no hechos comprobados sobre la empresa.
+-Si no enceuntras información relvante, dilo. No inventes datos."""
 
 
 
-SYNTH_SYSTEM = """Eres un redactor de informes de investigación. Escribes SOLO con la información de las contribuciones recibidas.
+
+SYNTH_SYSTEM = """Eres un redactor de informes de producti. Escribes SOLO con la informacion de las contribuciones recibidas.
 Reglas:
--Estructura el informe con estas secciones, en este orden: {sections}.
--Añade al final una sección "Incertidumbres" donde indiques datos que se contradicen o que faltan.
--Cita la fuente de cada afirmación entre corchetes, por ejemplo [entrevistas.md]
--Nunca inventes cifras ni fuentes.
--Nivel de detalle: {detail}."""
+- Estructura el informe con estas secciones, en este orden: {sections}
+- Añade al final una sección "Incertidumbres" con lo que falta o es debil.
+- Cita la fuente de cada afirmación entre corchetes, por ejemplo [queja 12345].
+- Las cifras y porcentajes deben aparecer tal cual en las contribuciones. Nunca inventes cifras ni fuentes.
+- Presenta las qejas como lo que reportan los clientes, no como hechos probados sobre la empresa.
+- Nivel de detalle: {detail}"""
+
 
 SYNTH_HUMAN = """tema: {topic}
 
@@ -40,16 +48,13 @@ Contribuciones de los especialistas:
 _synth_prompt = ChatPromptTemplate.from_messages([("system", SYNTH_SYSTEM), ("human", SYNTH_HUMAN)])
 
 
-
-
-
-ANALYST_SYSTEM = """ Eres un analista de evidencia.
-Recibes (1) un resumen de investigacion y (2) metricas calculadas por codigo.
+ANALYST_SYSTEM = """ Eres un analista de friccion de prodcto. Recibes (1) un resumen de investigacion sobre quejas de clientes y (2) metricas calculadas por tu codigo.
 Tu tarea:
-1. Evalua la solidez de la evidencia: cuantas fuentes independientes la respaldan.
-2. Indica si las fuentes coiniden o se contradicen, citando cada archivo entre corchetes
-3. Señala que informacion falta para una conclusion solida
-4. Usa SOLO las metricas y el resumen entragados. NO inentes cifras"""
+1. Agrupa las quejas en las causas prinicipales de fricción (Maximo 5), ordenadas de una mas a menos frecuente segun las cifras y resumen.
+2. Para cada causa, indica cuantas quejas la respaldan y cita al menos una queja como [queja 12345]
+3. Indica que tan solida es la evidencia: una causa respalda por pocas quejas es debil.
+4. Señala que informacion falta para decidir.
+5. Usa SOLO el reusmen y las metricas entregados. No inventes cifras. Recuerda que son relatos de clientes, no ehchos comprobados"""
 
 ANALYST_HUMAN = """Tema: {topic}
 Resumen de investigacion: {research}
@@ -69,7 +74,13 @@ MAX_TOOL_ROUNDS = 4
 
 
 
-
+@tool
+def contar_quejas(empresa: str = "", desde: str = "") -> str:
+    """Cuenta cuantas quejas hay por tema en toda la muestra.
+    Usa esta herramienta para cualquier cifra o porcentaje.
+    empresa:parte del nombre de la empresa (opcional). desde: fecha AAAA-MM-DD(opcional)"""
+    resultado = contar_por_tema(cargar_quejas(), empresa=empresa, desde=desde)
+    return json.dumps(resultado, ensure_ascii=False)
 
 def run_researcher(topic: str, retriever: Retriever, feedback: str ="") ->tuple[str, list[dict]]:
     found: list[dict] = []
@@ -78,14 +89,16 @@ def run_researcher(topic: str, retriever: Retriever, feedback: str ="") ->tuple[
     def search_documents(query: str) -> str:
         """Busca fragmentos relevantes en los documentos de investigación.
         Devuelve el texto de cada fragmento precedido por el archivo del que viene"""
-        sources = retriever.search(query, k=4)
+        sources = retriever.search(query, k=K_BUSQUEDA)
         found.extend({"file": s.file, "excerpt": s.excerpt} for s in sources)
         return format_context(sources)
 
-    llm = get_llm(temperature=0).bind_tools([search_documents])
-    pedido = f"Investiga el siguiente tema: {topic}"
+    herramientas = {"search_documents": search_documents, "contar_quejas": contar_quejas}
+    llm = get_llm(temperature=0).bind_tools(list(herramientas.values()))
+
+    pedido = f"Investiga este tema: {topic}"
     if feedback:
-        pedido += f"\n\nCorrección pedida por el revisor humano: {feedback}"
+        pedido += f"\n\nCorrección pedida por el revisor humano (tenla en cuenta): {feedback}"
 
     messages = [SystemMessage(RESEARCHER_SYSTEM), HumanMessage(pedido)]
 
@@ -96,7 +109,7 @@ def run_researcher(topic: str, retriever: Retriever, feedback: str ="") ->tuple[
         if not ai.tool_calls:
             break
         for call in ai.tool_calls:
-            resultado = search_documents.invoke(call["args"])
+            resultado = herramientas[call["name"]].invoke(call["args"])
             messages.append(ToolMessage(content=resultado, tool_call_id=call["id"]))
 
     unicas = list({(r["file"], r["excerpt"]): r for r in found}.values())

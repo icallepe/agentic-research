@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 from agentic_research.app.models import Source
 
+
 class Retriever(ABC):
     """Algo que sabe buscar fragmentos relevantes en los documentos"""
 

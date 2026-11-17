@@ -4,6 +4,7 @@ from pydantic import ValidationError
 from agentic_research.app.agents import analyze_evidence
 from agentic_research.app.models import ResearchRequest, ReviewRequest
 
+
 def test_request_valida():
     r = ResearchRequest(topic="abandono del registro")
     assert r.detail_level == "low"

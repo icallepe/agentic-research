@@ -1,6 +1,7 @@
 import operator
 from typing import Annotated, TypedDict
 
+
 class ResearchState(TypedDict, total=False):
     topic: str
     sections: list[str]

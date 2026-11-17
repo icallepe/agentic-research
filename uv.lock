@@ -19,6 +19,7 @@ dependencies = [
     { name = "openinference-instrumentation-langchain" },
     { name = "pydantic" },
     { name = "redis" },
+    { name = "requests" },
     { name = "uvicorn", extra = ["standard"] },
 ]
 
@@ -45,6 +46,7 @@ requires-dist = [
     { name = "openinference-instrumentation-langchain", specifier = ">=0.1.82" },
     { name = "pydantic", specifier = ">=2.14.0" },
     { name = "redis", specifier = ">=8.1.0" },
+    { name = "requests", specifier = ">=2.34.2" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.54.0" },
 ]
 

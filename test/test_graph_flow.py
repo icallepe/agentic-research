@@ -5,6 +5,7 @@ from langgraph.types import Command
 from agentic_research.app import graph as g
 from agentic_research.app.models import RouteDecision
 
+
 def fake_decide(topic, has_research, has_analysis, has_draft, step_count): 
     if not has_research:
         nxt = "researcher"

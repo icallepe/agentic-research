@@ -10,6 +10,9 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 REDIS_URL = os.getenv("REDIS_URL")
 MODEL_NAME = "gpt-4o-mini"
 EMBEDDING_MODEL = "text-embedding-3-small"
+QUEJAS_CSV = "data/quejas.csv"
+MAX_CHARS_QUEJA = 1500
+K_BUSQUEDA = 5
 # Phoenix (observabilidad). Vacio = sin trazas.
 PHOENIX_ENDPOINT = os.getenv("PHOENIX_ENDPOINT", "")
 

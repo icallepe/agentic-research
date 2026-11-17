@@ -2,6 +2,7 @@ import pytest
 
 from agentic_research.app.graph import apply_rules, forced_route
 
+
 @pytest.mark.parametrize("llm_next", ["analyst", "synthesizer", "finish"])
 def test_sin_investigacion_solo_puede_investigar(llm_next):
     ruta, _ = apply_rules(llm_next, has_r=False, has_a=False, has_d=False)

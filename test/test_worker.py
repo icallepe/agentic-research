@@ -2,6 +2,7 @@ import asyncio
 from types import SimpleNamespace
 
 from agentic_research.app.worker import execute, trace_event
+
 from .fakes import MemoryJobStore
 
 

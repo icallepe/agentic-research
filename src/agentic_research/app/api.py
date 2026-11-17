@@ -1,9 +1,10 @@
 import uuid
-from pathlib import Path
 from contextlib import asynccontextmanager
+from pathlib import Path
+
 import redis.asyncio as redis
-from fastapi.staticfiles import StaticFiles
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
+from fastapi.staticfiles import StaticFiles
 
 from agentic_research.app.config import REDIS_URL
 from agentic_research.app.infraestructure.redis_jobs import RedisJobQueue, RedisJobStore

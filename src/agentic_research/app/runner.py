@@ -1,4 +1,4 @@
-import uuid 
+import uuid
 from contextlib import asynccontextmanager
 
 from langgraph.checkpoint.redis.aio import AsyncRedisSaver
@@ -7,6 +7,7 @@ from langgraph.types import Command
 from agentic_research.app.config import REDIS_URL
 from agentic_research.app.graph import build_graph, initial_state
 from agentic_research.app.models import ResearchRequest
+
 
 @asynccontextmanager
 async def open_graph():

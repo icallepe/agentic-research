@@ -4,7 +4,9 @@ import pytest
 from fastapi.testclient import TestClient
 
 from agentic_research.app.api import app, get_queue, get_store
+
 from .fakes import MemoryJobQueue, MemoryJobStore
+
 
 @pytest.fixture
 def ctx():
