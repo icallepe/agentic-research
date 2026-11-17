@@ -1,11 +1,12 @@
-from typing import TypeDict
+from typing import TypedDict
 
-from langgrapgh.graph import END, START, StateGraph
+from langgraph.graph import END, START, StateGraph
+
 
 class Estado(TypedDict):
     texto: str
 
-def poner_maysculas(state: EStado) -> dict:
+def poner_maysculas(state: Estado) -> dict:
     return{"texto": state["texto"].upper()}
 
 def agregar_firma(state: Estado) -> dict:

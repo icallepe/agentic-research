@@ -2,8 +2,9 @@ import asyncio
 
 import redis.asyncio as redis
 
-from agentic_research.app.config import REDIS_URLS
+from agentic_research.app.config import REDIS_URL
 from agentic_research.app.infraestructure.redis_jobs import RedisJobQueue, RedisJobStore
+
 
 async def main():
     r = redis.from_url(REDIS_URL, decode_responses=True)
@@ -13,7 +14,7 @@ async def main():
     print(await store.get("t1"))
 
     print("Primera transición:", await store.transition("t1", "awaiting_review", "resuming"))
-    print("Segunda transición:", wait store.transition("t1", "awaiting_review", "resuming"))
+    print("Segunda transición:", await store.transition("t1", "awaiting_review", "resuming"))
 
     await queue.push({"job_id": "t1", "action": "start"})
     print("Mensaje en cola:", await queue.pop(timeout=1))

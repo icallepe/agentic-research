@@ -1,10 +1,11 @@
-from typing import TypeDict
+from typing import TypedDict
 
-from langgraph.checcpoint.memory import InMemorySaver
+from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.graph import END, START, StateGraph
-from langgraph.types import command, interrupt
+from langgraph.types import Command, interrupt
 
-class Estado(TypeDicted, total=False):
+
+class Estado(TypedDict, total=False):
     borrador: str
     aprobado: bool
 
@@ -26,7 +27,7 @@ grafo = b.compile(checkpointer=InMemorySaver())
 config = {"configurable": {"thread_id": "demo-1"}}
 
 resultado = grafo.invoke({}, config)
-print("Pausado. Mensaje para la persona:", resultado["__interupt___"][0.value])
+print("Pausado. Mensaje para la persona:", resultado["__interrupt__"][0].value)
 print("Siguiente nodo pendiente:", grafo.get_state(config).next)
 
 final = grafo.invoke(Command(resume="si"), config)

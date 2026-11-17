@@ -1,7 +1,8 @@
 import operator
 from typing import Annotated, TypedDict
 
-from langgrapgh.graph import END, START, StateGraph
+from langgraph.graph import END, START, StateGraph
+
 
 class SinReducer(TypedDict):
     notas: list[str]
@@ -25,4 +26,4 @@ def construir(estado_cls):
     return b.compile()
 
 print("Sin reducer:", construir(SinReducer).invoke({"notas": []}))
-print("Con reducer:", construir(ConRedcer).invoke({"notas": []}))
+print("Con reducer:", construir(ConReducer).invoke({"notas": []}))

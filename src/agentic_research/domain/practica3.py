@@ -10,7 +10,7 @@ class Fuente:
         return f"Fuente({self.archivo!r}, {self.num_palabras()} palabras)"
 
     def es_larga(self, minimo: int =100) -> bool:
-        return sef.num_palabras() > minimo
+        return self.num_palabras() > minimo
 
 
 f = Fuente("entrevistas.md", "El usuario abandonó el paso dos") 

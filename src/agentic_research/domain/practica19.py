@@ -2,6 +2,7 @@ from typing import TypedDict
 
 from langgraph.graph import END, START, StateGraph
 
+
 class Estado(TypedDict):
     texto: str
     resultado: str

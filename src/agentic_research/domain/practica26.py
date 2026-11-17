@@ -5,6 +5,7 @@ from langgraph.types import Command
 
 from agentic_research.app.graph import build_graph, initial_state
 
+
 async def main() -> None:
     grafo = build_graph(InMemorySaver())
     config = {"configurable": {"thread_id": "prueba-1"}}
