@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Radar de quejas · demo</title>
+  <meta name="description" content="Un asistente de IA que lee cientos de quejas de clientes y escribe un informe donde cada afirmación cita la queja original. Demo con informes ya generados.">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%234285F4'/%3E%3Cpath d='M9 22V10m7 12V14m7 8V8' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="preload" href="fonts/BricolageGrotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#producto">Saltar al contenido</a>
+
+  <header class="nav">
+    <a class="brand" href="#producto" aria-label="Radar de quejas, ir al inicio">
+      <span class="logo" aria-hidden="true"><i></i><i></i><i></i></span>Radar de quejas
+    </a>
+    <nav class="nav-links" aria-label="Secciones">
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#datos">Datos</a>
+      <a href="#informes">Informes</a>
+      <a href="#quejas">Quejas</a>
+      <a href="#metodo">Método</a>
+      <a class="gh" href="https://github.com/icallepe/agentic-research" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+    </nav>
+  </header>
+
+  <nav class="dots" id="dots" aria-label="Ir a la sección">
+    <a href="#producto" data-s="producto" aria-label="Producto"></a>
+    <a href="#como-funciona" data-s="como-funciona" aria-label="Cómo funciona"></a>
+    <a href="#datos" data-s="datos" aria-label="Datos"></a>
+    <a href="#informes" data-s="informes" aria-label="Informes"></a>
+    <a href="#quejas" data-s="quejas" aria-label="Quejas"></a>
+    <a href="#metodo" data-s="metodo" aria-label="Método"></a>
+  </nav>
+
+  <main id="main">
+
+    <!-- 1 · El producto, lo primero -->
+    <section class="screen hero" id="producto" aria-labelledby="h-producto">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="dot-live" aria-hidden="true"></span>Asistente de investigación con IA · demo</p>
+          <h1 id="h-producto">Entiende por qué se quejan tus clientes.</h1>
+          <p class="lead">Radar de quejas lee cientos de quejas, encuentra las causas principales y escribe un informe donde <strong>cada afirmación cita la queja original</strong>. Tú la compruebas con un clic y decides si se aprueba.</p>
+          <p class="who">Para equipos de producto, atención al cliente y riesgo.</p>
+          <div class="cta">
+            <a class="btn primary" href="#como-funciona">Ver cómo funciona</a>
+            <a class="btn" href="#datos">Explorar los datos</a>
+          </div>
+        </div>
+        <figure class="example" id="example" aria-label="Ejemplo de afirmación con su cita"></figure>
+      </div>
+      <ul class="pillars">
+        <li><span class="pi blue" aria-hidden="true"></span><div><h2>Cada dato, con su fuente</h2><p>Toda afirmación lleva una cita. Púlsala y lees la queja real, con su empresa y su fecha.</p></div></li>
+        <li><span class="pi red" aria-hidden="true"></span><div><h2>Los números los pone el código</h2><p>El modelo no cuenta ni calcula: los porcentajes salen de código, sobre todas las quejas.</p></div></li>
+        <li><span class="pi green" aria-hidden="true"></span><div><h2>Una persona decide</h2><p>El flujo se detiene hasta que alguien aprueba el informe o pide cambios.</p></div></li>
+      </ul>
+      <p class="fine">Esta demo muestra informes ya generados con quejas reales y no llama a ningún modelo. El sistema completo investiga cualquier tema en vivo.</p>
+    </section>
+
+    <!-- 2 · Cómo funciona -->
+    <section class="screen" id="como-funciona" aria-labelledby="h-flow">
+      <header class="s-head">
+        <p class="eyebrow">Cómo funciona</p>
+        <h2 id="h-flow">Un equipo de agentes, paso a paso.</h2>
+        <p class="s-sub">Elige un informe: el recorrido usa lo que pasó de verdad en él.</p>
+      </header>
+      <div class="flow">
+        <div class="flow-left">
+          <div class="flow-ex" id="flow-ex" role="group" aria-label="Informe de ejemplo"></div>
+          <div class="flow-detail" id="flow-detail" aria-live="off"></div>
+          <div class="flow-ctl" role="group" aria-label="Controles del recorrido">
+            <button type="button" class="btn small" id="flow-prev" aria-label="Paso anterior">←</button>
+            <button type="button" class="btn primary small" id="flow-play" aria-label="Reproducir">▶ Reproducir</button>
+            <button type="button" class="btn small" id="flow-next" aria-label="Paso siguiente">→</button>
+          </div>
+        </div>
+        <div class="flow-right">
+          <div class="flow-stage"><svg id="flow-svg" viewBox="0 0 1100 400" role="img" aria-label="Diagrama: la pregunta llega al supervisor, que reparte el trabajo entre investigador, analista y redactor; después una persona revisa y se obtiene el informe con citas. Los pasos se describen en el texto."></svg></div>
+          <ol class="steps" id="flow-steps" aria-label="Pasos del recorrido"></ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 · Datos -->
+    <section class="screen alt" id="datos" aria-labelledby="h-datos">
+      <header class="s-head row-head">
+        <div>
+          <p class="eyebrow">Los datos</p>
+          <h2 id="h-datos">Qué dicen 200 quejas reales.</h2>
+        </div>
+        <div class="filters" aria-label="Filtros">
+          <label>Tema <select id="f-tema"></select></label>
+          <label>Empresa <select id="f-empresa"></select></label>
+          <label>Año <select id="f-anio"></select></label>
+          <button type="button" class="btn small" id="clear" hidden>Quitar filtros</button>
+        </div>
+      </header>
+      <div class="kpis" id="kpis"></div>
+      <div class="charts">
+        <section class="card chart c-anio" id="c-anio">
+          <header class="card-head">
+            <div><h3>Quejas por año</h3><p class="sub">Muestra de 200 quejas: no es una tendencia real.</p></div>
+            <button type="button" class="btn small" data-table="anio" aria-pressed="false">Ver tabla</button>
+          </header>
+          <div class="plot" id="p-anio" tabindex="0" role="group" aria-label="Quejas por año. Flechas para recorrer los años, Intro para filtrar."></div>
+          <div class="table-view" id="t-anio" hidden></div>
+        </section>
+        <section class="card chart" id="c-tema">
+          <header class="card-head">
+            <div><h3>Temas</h3><p class="sub">Pulsa uno para filtrar.</p></div>
+            <button type="button" class="btn small" data-table="tema" aria-pressed="false">Ver tabla</button>
+          </header>
+          <div class="bars-host" id="p-tema"></div>
+          <div class="table-view" id="t-tema" hidden></div>
+        </section>
+        <section class="card chart" id="c-empresa">
+          <header class="card-head">
+            <div><h3>Empresas</h3><p class="sub">Pulsa una para filtrar.</p></div>
+            <button type="button" class="btn small" data-table="empresa" aria-pressed="false">Ver tabla</button>
+          </header>
+          <div class="bars-host" id="p-empresa"></div>
+          <div class="table-view" id="t-empresa" hidden></div>
+        </section>
+      </div>
+      <p class="goto"><span id="count" aria-live="polite"></span> <a href="#quejas" id="goto-quejas">Leer estas quejas →</a></p>
+    </section>
+
+    <!-- 4 · Informes -->
+    <section class="screen full" id="informes" aria-labelledby="h-informes">
+      <header class="s-head row-head">
+        <div>
+          <p class="eyebrow">Los informes</p>
+          <h2 id="h-informes">Cada afirmación, con su prueba.</h2>
+        </div>
+        <div class="pills" id="pills" role="group" aria-label="Informe"></div>
+      </header>
+      <div class="split">
+        <article class="card report" id="informe" tabindex="-1" aria-live="polite"></article>
+        <aside class="card ev" data-ev="informe" aria-label="Evidencia: queja original"></aside>
+      </div>
+    </section>
+
+    <!-- 5 · Quejas -->
+    <section class="screen full alt" id="quejas" aria-labelledby="h-quejas">
+      <header class="s-head row-head">
+        <div>
+          <p class="eyebrow">Las quejas</p>
+          <h2 id="h-quejas">Léelas tú mismo.</h2>
+        </div>
+        <div class="search">
+          <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m13.5 13.5 3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <input type="search" id="q" placeholder="Buscar por empresa, tema o texto…" aria-label="Buscar en las quejas" autocomplete="off">
+        </div>
+      </header>
+      <div class="split">
+        <section class="card list" id="lista" aria-label="Lista de quejas"></section>
+        <aside class="card ev" data-ev="quejas" aria-label="Evidencia: queja original"></aside>
+      </div>
+    </section>
+
+    <!-- 6 · Método -->
+    <section class="screen" id="metodo" aria-labelledby="h-metodo">
+      <header class="s-head">
+        <p class="eyebrow">Método</p>
+        <h2 id="h-metodo">Por qué puedes fiarte (y cómo se mide).</h2>
+      </header>
+      <div class="metodo">
+        <div class="cards2">
+          <div class="card flat"><span class="pi blue" aria-hidden="true"></span><h3>Un equipo de agentes</h3><p>Un supervisor reparte el trabajo entre investigador, analista y redactor. Reglas en código lo corrigen si se salta un paso.</p></div>
+          <div class="card flat"><span class="pi red" aria-hidden="true"></span><h3>Números con código</h3><p>Conteos y porcentajes se calculan sobre todas las quejas. Los gráficos de esta página usan esos mismos datos.</p></div>
+          <div class="card flat"><span class="pi green" aria-hidden="true"></span><h3>Revisión humana</h3><p>Aprobar o pedir cambios. Con cambios, los agentes repiten el trabajo con tu comentario.</p></div>
+          <div class="card flat"><span class="pi yellow" aria-hidden="true"></span><h3>Citas verificables</h3><p>Cada <code>[queja N]</code> se comprueba contra los datos al exportar: si el ID no existe, se marca ✗.</p></div>
+        </div>
+        <div class="card eval">
+          <h3>Evaluación</h3>
+          <p class="sub" id="eval-intro"></p>
+          <div class="table-wrap">
+            <table id="eval-table">
+              <caption class="sr">Preguntas de evaluación y respuesta correcta</caption>
+              <thead><tr><th scope="col">#</th><th scope="col">Pregunta</th><th scope="col">Respuesta correcta</th><th scope="col">Agente</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <p class="more-note" id="eval-more" hidden></p>
+        </div>
+      </div>
+      <p class="fine" id="source-note"></p>
+    </section>
+  </main>
+
+  <div class="tip" id="tip" role="tooltip" hidden></div>
+  <script src="data/reports.js"></script>
+  <script src="app.js"></script>
+  <script src="flow.js"></script>
+</body>
+</html>
